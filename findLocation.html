@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Find my Location</title>
+    <link rel="stylesheet" href="location.css">
+</head>
+<body>
+    <div id="infoContainer">
+        <!-- Results container -->
+        <div id="result" class="result_container" >
+            <div id="searchContainer" >
+                <input type="text" id="userPlace" placeholder="Enter a place">
+                <button id="clearText">⌫</button>
+                <button class="result_text" id="locationLabel" >➠ Go to your current location</button>
+                <p class="result_text"  id="location" >N/a</p>
+            </div> 
+            <!-- Container for the responses -->
+            <div id="resultList" ></div>
+        </div>
+        <!-- 2nd Columb for places added by user -->
+        <div id="places" class="places_container">
+            <div id="placesHeader">
+                <p class="destinations"  id="destLabel">My Roadtrip</p>
+                <button class="placesAction" id="clearList">Clear list</button>
+                <button class="placesAction" id="calc">Calculate trip</button>
+            </div>
+            <div class="destinations" id="destText" ></div>
+            <button id="expand" class="expandPlaces" >></button> 
+        </div>
+        <!-- Map container -->
+        <div id="mapContainer" >
+            <div id="map" ></div>
+        </div>
+    </div>
+    <script src="findLocation.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVmJ3EWDCAA1Go7BMxBUjcAPH3-9H1Uno&libraries=places&callback=initMap"
+    async defer></script>
+</body>
+</html>
