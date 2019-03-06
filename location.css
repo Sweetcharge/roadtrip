@@ -12,8 +12,9 @@ button:focus {
 * ================= 1. Results container        =================
 * ================= 2. Places Container         =================
 * ================= 3. Map Container            =================
-* ================= 4. Animations/Keyframes     =================
-* ================= 5. Responsive               =================
+* ================= 4. Trip Info Container      =================
+* ================= A. Animations/Keyframes     =================
+* ================= B. Responsive               =================
 */
 
 /* ================= PARENT NODE ================= */
@@ -208,7 +209,7 @@ button:focus {
     .expandPlaces, .expandSearch{
         z-index: 1;
         position: absolute;
-        top: 10px;
+        top: 40px;
         left: 420px;
         padding: 10px 2px 10px 2px;
         border: none;
@@ -252,7 +253,41 @@ button:focus {
         height: 100%;
     }
 
-/* ================= 4. ANIMATIONS ================= */
+
+/* ================= 4. TRIP_INFO_CONTAINER ================= */
+.tripInfo_container{
+    position: absolute;
+    z-index: 2;
+    bottom: 0%;
+    left: 0;
+    right: 0;
+    background: white;
+    margin: 0px auto;
+    width: 475px;
+    height: 60px;
+    padding: 20px;
+    background-color: rgba(26, 26, 26, 0.516); 
+    text-align: center;
+    visibility: hidden;
+}
+    .routesInfo{
+        width: 200px;
+        height: 50px;
+        margin: 0px 10px;
+        display: inline-block;
+    }
+        #distanceNumber, #timeNumber{
+            color: rgb(255, 153, 0);
+            font-size: 40px;
+            font-family: "HelveticaNeue-CondensedBold";
+        }
+        .routesLabel{
+            color: rgb(255, 255, 255);
+            font-family: "HelveticaNeue-CondensedBold";
+            font-size: 20px;
+        }
+
+/* ================= A. ANIMATIONS ================= */
 
 .addItemAnimation{
     animation: move 0.5s;
@@ -282,4 +317,4 @@ button:focus {
     animation: itemAdded .5s;
 }
 
-/* ================= 5. RESPONSIVE ================= */
+/* ================= B. RESPONSIVE ================= */

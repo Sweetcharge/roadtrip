@@ -7,9 +7,9 @@
 !!! = Difficult/Have to research
     
 TO DO 
-- Find distance between two locations [!!]
 - Find the shortest route between all inputted locations [!!!]
 - Remove destinations individually
+- Finishing touches
 */
 var map;
 
@@ -34,9 +34,18 @@ var directionsService = "";
 var directionsDisplay = "";
 
 
-/* ===== Initialize map =====
-* Creates the map object and calls the setGeocoder() and getCurrentLocation() functions
-*/
+document.getElementById("locationLabel").addEventListener("click", resetMap);
+searchQuery.addEventListener("keyup", removeResults);
+
+
+clearText.addEventListener("click", removeText);
+clearText.addEventListener("click", removeResults);
+document.getElementById("expand").addEventListener("click", expand);
+document.getElementById("calc").addEventListener("click", calculateTrip);
+document.getElementById("calc").addEventListener("click", getRoute);
+document.getElementById("clearList").addEventListener("click", clearTrip);
+document.getElementById("expandSearch").addEventListener("click", expandSearch);
+
 function initMap(){
     map = new google.maps.Map(document.getElementById("map"), {
         center: {
@@ -136,20 +145,15 @@ function initMap(){
     directionsDisplay.setMap(map);
 }
 
-/* ===== Reset Map =====
-* Resets the maps' markers and centers the map to the current location
-*/
-document.getElementById("locationLabel").addEventListener("click", resetMap);
+
+
 
 function resetMap(){
     deleteMarkers(markers);
     updateMap(currentLocationLatitude, currentLocationLongitude, map);
 }
 
-/* ===== Get current location =====
-* Gets the current location of the user and upates the map
-* Passes through the retrieved data to the updateMap() function which calls the addMarker() function
-*/
+
 function getCurrentLocation(){
     if("geolocation" in navigator){
         navigator.geolocation.getCurrentPosition(function(position){
@@ -184,10 +188,7 @@ function getCurrentLocation(){
     }
 }
 
-/* ===== Update map =====
-* Centers the map to the passed latitude and longitude
-* Proceeds to add a marker based off of the latitude and longitude parameters
-*/
+
 function updateMap(latitude, longitude, resultMap){
     if(latitude == 0 && longitude == 0){
         resultMap.setZoom(1);
@@ -200,13 +201,6 @@ function updateMap(latitude, longitude, resultMap){
     }
 }
 
-/* ===== Add marker =====
-* Adds a marker to the map passed through the function
-* A marker object is pushed to the array passed through the function
-* Fits the maps' bounds to fit all of the markers
-* Arrays: 
-    - Markers from search result 
-*/
 function addMarker(markerArray, resultMap, long, lat){
     var marker = new google.maps.Marker({
         position: {
@@ -229,11 +223,6 @@ function addMarker(markerArray, resultMap, long, lat){
     }
 }
 
-/* ===== Add custom marker ===== NOT DONE
-* Adds a custom marker to the map passed through the function
-* The marker represents a location that the user wants to visit
-* The marker object is pushed to another array containing the rest of the user's destination spots
-*/
 function addCustomMarker(ogIndex, markerArray, resultMap, long, lat){
     var marker = new google.maps.Marker({
         position: {
@@ -249,20 +238,13 @@ function addCustomMarker(ogIndex, markerArray, resultMap, long, lat){
     markerArray.push(marker);
 }
 
-/* ===== Clear list =====
-* Clears the list that is passed through the function; Userful for having a "refresh" effect
-*/
+
 function clearList(list){
     while (list.firstChild) {
         list.removeChild(list.firstChild);
     }
 }
 
-/* ===== Initiate SearchBox Library =====
-* Uses Google's SearchBox library to have an autocomplete or suggestions feature given a user's search query
-* - Checks to see if the store is open
-* - Retrieves the 10 closest locations based off of the search query
-*/
 function setGeocoder(){
     var searchBox = new google.maps.places.SearchBox(searchQuery);    
 
@@ -330,12 +312,7 @@ function addEvent(btn, event){
     }
 }
 
-// ===== Clear the search results when nothing is typed =====
-searchQuery.addEventListener("keyup", removeResults);
 
-// ===== Clear the textbox with a click of a button =====
-clearText.addEventListener("click", removeText);
-clearText.addEventListener("click", removeResults);
 
 function removeText(){
     searchQuery.value = "";
@@ -350,11 +327,6 @@ function removeResults(){
     } 
 }
 
-/* ===== Process to remove markers =====
-* Removes marker references from the map by setting each marker's map to null
-* Clears the markers array 
-* Creates a new marker just for the current location to indicate where the user is
-*/
 function deleteMarkers(markersArray){
     clearMarkers(markersArray);
     markersArray.length = 0;
@@ -381,7 +353,6 @@ function setMapOnAll(map, markersArray){
     }
 }
 
-// Checks to see if the added_places element is expanded; different animation if the element is already expanded and a user adds a place
 function isExpanded(){
     if(places_div.classList.contains("openFull")){
         places_div.classList.add("itemAddedAnimation");
@@ -396,7 +367,6 @@ function isExpanded(){
     }
 }
 
-// ===== Add to list of destinations =====
 function addToList(){
     let destText = document.getElementById("destText");
     isExpanded();
@@ -439,10 +409,7 @@ function addToList(){
     added_place_index++;   
 }
 
-/* ===== Expand =====
-* CSS adjustment to expand/close the places_div element
-*/
-document.getElementById("expand").addEventListener("click", expand);
+
 
 function expand(){
     let addBtn = document.getElementById("expand");
@@ -456,7 +423,7 @@ function expand(){
     }
 }
 
-document.getElementById("expandSearch").addEventListener("click", expandSearch);
+
 
 function expandSearch(){
     let addBtn = document.getElementById("expandSearch");
@@ -470,10 +437,7 @@ function expandSearch(){
     }
 }
 
-/* ===== Clear list of destination =====
-* Clears the map and the destinations container
-*/
-document.getElementById("clearList").addEventListener("click", clearTrip);
+
 
 function clearTrip(){
     let destText = document.getElementById("destText");
@@ -481,14 +445,10 @@ function clearTrip(){
     deleteMarkers(added_places_markers);
 }
 
-/* === Calculate Trip ===
-* Calculates trip between locations
-* Finds the best distance between all of the places
-*/
-document.getElementById("calc").addEventListener("click", calculateTrip);
-document.getElementById("calc").addEventListener("click", getRoute);
+
 
 function getDirectionsFromSinglePlace(){
+
     let locationLat = places_results[this.id].geometry.location.lat();
     let locationLong = places_results[this.id].geometry.location.lng();
     calculateTrip(locationLat, locationLong);
@@ -518,14 +478,17 @@ function calculateTrip(destinationLatitude, destinationLongitude){
 
 function getDistance(response, status){
     if(status == "OK"){
-        console.log("Distance: "+response.rows[0].elements[0].distance.text);
-        console.log("Duration: "+response.rows[0].elements[0].duration.text);
+        let distanceLablel = document.getElementById("distanceNumber");
+        let timeLabel = document.getElementById("timeNumber");
+        let timeInfoContainer = document.getElementById("tripInfo");
+
+        timeInfoContainer.style.visibility = "visible";
+        timeLabel.innerHTML = response.rows[0].elements[0].duration.text
+        distanceLablel.innerHTML = response.rows[0].elements[0].distance.text;
     }
 }
 
 function getRoute(destinationLatitude, destinationLongitude){
-    // let destinationLatitude = added_places_markers[1].position.lat();
-    // let destinationLongitude = added_places_markers[1].position.lng();
     let directionRequest = {
         origin: {
             lat: currentLocationLatitude,
