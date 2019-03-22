@@ -29,28 +29,36 @@ var places_div = document.getElementById("places");
 var result_div = document.getElementById("result");
 var searchQuery = document.getElementById("userPlace");
 var clearText = document.getElementById("clearText");
+var resetMapLabel = document.getElementById("locationLabel");
+var expandBtn = document.getElementById("expand");
+var calculateBtn = document.getElementById("calc");
+var clearBtn = document.getElementById("clearList");
+var expandSearchContainerBtn = document.getElementById("expandSearch");
 
 var directionsService = "";
 var directionsDisplay = "";
 
 
-document.getElementById("locationLabel").addEventListener("click", resetMap);
-searchQuery.addEventListener("keyup", removeResults);
-
-
+// Event listeners
+resetMapLabel.addEventListener("click", resetMap);
+searchQuery.addEventListener("keyup", removeResults); // Clears the results list when nothing is typed
 clearText.addEventListener("click", removeText);
 clearText.addEventListener("click", removeResults);
-document.getElementById("expand").addEventListener("click", expand);
-document.getElementById("calc").addEventListener("click", calculateTrip);
-document.getElementById("calc").addEventListener("click", getRoute);
-document.getElementById("clearList").addEventListener("click", clearTrip);
-document.getElementById("expandSearch").addEventListener("click", expandSearch);
+expandBtn.addEventListener("click", expand);
+
+
+calculateBtn.addEventListener("click", calculateTrip);
+//calculateBtn.addEventListener("click", getRoute);
+
+
+clearBtn.addEventListener("click", clearTrip);
+expandSearchContainerBtn.addEventListener("click", expandSearch);
 
 function initMap(){
     map = new google.maps.Map(document.getElementById("map"), {
         center: {
-            lat: 0, 
-            lng: 0
+            lat: currentLocationLatitude, 
+            lng: currentLocationLongitude
         },
         zoom: 1,
         mapTypeControlOptions: {
@@ -142,17 +150,21 @@ function initMap(){
     getCurrentLocation();
     directionsService = new google.maps.DirectionsService();
     directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setOptions({
+        suppressMarkers: true,
+        polylineOptions: {
+            strokeWeight: 5,
+            strokeOpacity: 0.8,
+            strokeColor:  '#3BB28D' 
+        },
+    })
     directionsDisplay.setMap(map);
 }
-
-
-
 
 function resetMap(){
     deleteMarkers(markers);
     updateMap(currentLocationLatitude, currentLocationLongitude, map);
 }
-
 
 function getCurrentLocation(){
     if("geolocation" in navigator){
@@ -217,7 +229,7 @@ function addMarker(markerArray, resultMap, long, lat){
     }
 
     if (markerArray.length == 1){
-        resultMap.setZoom(18);
+        resultMap.setZoom(17);
     } else {
         resultMap.fitBounds(bounds);
     }
@@ -257,19 +269,19 @@ function setGeocoder(){
         deleteMarkers(markers);
         places_results.length = 0;
 
-        for(var i = 0; i<10; i++){
+        for(var i = 0; i<(searchBox.getPlaces().length); i++){
             let openHours = searchBox.getPlaces()[i].opening_hours;
             let openText = "";
 
             // Check if the store is open or closed 
-            if(typeof openHours != "undefined"){
+            if(typeof openHours != "undefined") {
                 let open = searchBox.getPlaces()[i].opening_hours.open_now;
-                if(open == true){
+                if(open == true) {
                     openText = "Open";
-                } else{
+                } else {
                     openText = "Closed";
                 }
-            } else {
+            } else if(typeof openHours == "undefined"){
                 openText = "N/a";
             }
 
@@ -277,7 +289,6 @@ function setGeocoder(){
             let rating = searchBox.getPlaces()[i].rating;
             let userRating = searchBox.getPlaces()[i].user_ratings_total;
             let address = searchBox.getPlaces()[i].formatted_address.split(", USA")[0];
-            let icon = searchBox.getPlaces()[i].icon;
             let lat = searchBox.getPlaces()[i].geometry.location.lat();
             let long = searchBox.getPlaces()[i].geometry.location.lng()
 
@@ -311,8 +322,6 @@ function addEvent(btn, event){
         btn[i].addEventListener("click", event);
     }
 }
-
-
 
 function removeText(){
     searchQuery.value = "";
@@ -409,8 +418,6 @@ function addToList(){
     added_place_index++;   
 }
 
-
-
 function expand(){
     let addBtn = document.getElementById("expand");
     places_div.classList.toggle("openSemi");
@@ -422,8 +429,6 @@ function expand(){
         addBtn.innerHTML = "→";
     }
 }
-
-
 
 function expandSearch(){
     let addBtn = document.getElementById("expandSearch");
@@ -438,42 +443,40 @@ function expandSearch(){
 }
 
 
-
 function clearTrip(){
     let destText = document.getElementById("destText");
     clearList(destText);
     deleteMarkers(added_places_markers);
 }
 
-
-
 function getDirectionsFromSinglePlace(){
-
     let locationLat = places_results[this.id].geometry.location.lat();
     let locationLong = places_results[this.id].geometry.location.lng();
-    calculateTrip(locationLat, locationLong);
-    getRoute(locationLat, locationLong);
+    // calculateTrip(locationLat, locationLong);
 }
 
-function calculateTrip(destinationLatitude, destinationLongitude){
+function calculateTrip(){
     let distanceRequest = new google.maps.DistanceMatrixService();
-    distanceRequest.getDistanceMatrix(
-        {
-          origins: [{
-              lat: currentLocationLatitude,
-              lng: currentLocationLongitude
-          }],
-          destinations: [{
-              lat: destinationLatitude,
-              lng: destinationLongitude
-          }],
-          travelMode: 'DRIVING',
-          unitSystem: google.maps.UnitSystem.IMPERIAL
-        //   transitOptions: TransitOptions,
-        //   drivingOptions: DrivingOptions,
-        //   avoidHighways: Boolean,
-        //   avoidTolls: Boolean,
-        }, getDistance);
+    let destinationLat = added_places[added_places.length-1].geometry.location.lat();
+    let destinationLng = added_places[added_places.length-1].geometry.location.lng();
+    // distanceRequest.getDistanceMatrix(
+    //     {
+    //       origins: [{
+    //           lat: currentLocationLatitude,
+    //           lng: currentLocationLongitude
+    //       }],
+    //       destinations: [{
+    //           lat: destinationLat,
+    //           lng: destinationLng
+    //       }],
+    //       travelMode: 'DRIVING',
+    //       unitSystem: google.maps.UnitSystem.IMPERIAL
+    //     //   transitOptions: TransitOptions,
+    //     //   drivingOptions: DrivingOptions,
+    //     //   avoidHighways: Boolean,
+    //     //   avoidTolls: Boolean,
+    //     }, getDistance);
+    getRoute(destinationLat, destinationLng); 
 }
 
 function getDistance(response, status){
@@ -485,10 +488,15 @@ function getDistance(response, status){
         timeInfoContainer.style.visibility = "visible";
         timeLabel.innerHTML = response.rows[0].elements[0].duration.text
         distanceLablel.innerHTML = response.rows[0].elements[0].distance.text;
+        console.log(response);
     }
 }
 
 function getRoute(destinationLatitude, destinationLongitude){
+    var waypts = [];
+    waypts = getWaypoints(waypts);
+    console.log(waypts);
+    
     let directionRequest = {
         origin: {
             lat: currentLocationLatitude,
@@ -498,13 +506,25 @@ function getRoute(destinationLatitude, destinationLongitude){
             lat: destinationLatitude,
             lng: destinationLongitude
         },
-        travelMode: 'DRIVING'
+        travelMode: 'DRIVING',
+        waypoints: waypts,
+        optimizeWaypoints: true
       };
       directionsService.route(directionRequest, function(response, status){
         if(status == "OK"){
             directionsDisplay.setDirections(response);
         }
     });
+}
+
+function getWaypoints(a){
+    for(var j = 0; j < added_places.length; j++){
+        a.push({
+            location: added_places[j].formatted_address,
+            stopover: true
+        });   
+    }
+    return a;
 }
 
 
