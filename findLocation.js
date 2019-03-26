@@ -30,29 +30,32 @@ var result_div = document.getElementById("result");
 var searchQuery = document.getElementById("userPlace");
 var clearText = document.getElementById("clearText");
 var resetMapLabel = document.getElementById("locationLabel");
-var expandBtn = document.getElementById("expand");
 var calculateBtn = document.getElementById("calc");
 var clearBtn = document.getElementById("clearList");
-var expandSearchContainerBtn = document.getElementById("expandSearch");
+var mainContainer = document.getElementById("mainContainer");
+var direction_div = document.getElementById("directions");
+
+var searchBtn = document.getElementById("searchBtn");
+var destBtn = document.getElementById("destBtn");
+var dirBtn = document.getElementById("dirBtn");
 
 var directionsService = "";
 var directionsDisplay = "";
-
 
 // Event listeners
 resetMapLabel.addEventListener("click", resetMap);
 searchQuery.addEventListener("keyup", removeResults); // Clears the results list when nothing is typed
 clearText.addEventListener("click", removeText);
 clearText.addEventListener("click", removeResults);
-expandBtn.addEventListener("click", expand);
 
+searchBtn.addEventListener("click", switchToSearch);
+destBtn.addEventListener("click", switchToDestinations);
+dirBtn.addEventListener("click", switchToDirections);
 
 calculateBtn.addEventListener("click", calculateTrip);
 //calculateBtn.addEventListener("click", getRoute);
 
-
 clearBtn.addEventListener("click", clearTrip);
-expandSearchContainerBtn.addEventListener("click", expandSearch);
 
 function initMap(){
     map = new google.maps.Map(document.getElementById("map"), {
@@ -381,6 +384,12 @@ function addToList(){
     isExpanded();
     let originalMarkerIndex = this.id;
     added_places.push(places_results[this.id]);
+    destBtn.innerHTML = "Destinations ("+added_places.length+")";
+
+    document.getElementById(this.id).classList.remove("addBtn");
+    document.getElementById(this.id).classList.add("added");
+    document.getElementById(this.id).innerHTML = "Added!";
+    document.getElementById(this.id).removeEventListener("click", addToList);
 
     let openHours = added_places[added_place_index].opening_hours;
     let openText = "";
@@ -444,9 +453,12 @@ function expandSearch(){
 
 
 function clearTrip(){
+    console.log("Cleared");
     let destText = document.getElementById("destText");
     clearList(destText);
     deleteMarkers(added_places_markers);
+    added_places = [];
+    destBtn.innerHTML = "Destinations ("+added_places.length+")";
 }
 
 function getDirectionsFromSinglePlace(){
@@ -527,4 +539,32 @@ function getWaypoints(a){
     return a;
 }
 
+function switchToDestinations(){
+    places_div.style.display = "block";
+    result_div.style.display = "none";
+    direction_div.style.display = "none";
 
+    // destBtn.classList.toggle("notSelected");
+    // destBtn.classList.toggle("selected");
+
+    // searchBtn.classList.toggle("selected");
+    // searchBtn.classList.toggle("notSelected");
+
+    mainContainer.style.gridTemplateAreas = '"search search search search" ". . . ." ". . . navigation" "map map map places"';
+}
+
+function switchToSearch(){
+    result_div.style.display = "block";
+    places_div.style.display = "none";
+    direction_div.style.display = "none";
+
+    mainContainer.style.gridTemplateAreas = '"search search search search" ". . . ." ". . . navigation" "map map map results"';
+}
+
+function switchToDirections(){
+    direction_div.style.display = "block";
+    result_div.style.display = "none";
+    places_div.style.display = "none";
+
+    mainContainer.style.gridTemplateAreas = '"search search search search" ". . . ." ". . . navigation" "map map map directions"';
+}

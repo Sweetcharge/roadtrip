@@ -6,31 +6,50 @@
     <link rel="stylesheet" href="location.css">
 </head>
 <body>
-    <div id="infoContainer">
-        <!-- Results container -->
-        <div id="result" class="result_container" >
-            <div id="searchContainer" >
-                <input type="text" id="userPlace" placeholder="Enter a place">
-                <button id="clearText">⌫</button>
-                <button class="result_text" id="locationLabel" >➠ Go to your current location</button>
-                <p class="result_text"  id="location" >N/a</p>
-            </div> 
-            <!-- Container for the responses -->
+    <header></header>
+    <div id="mainContainer">
+
+        <div id="searchContainer">
+            <input type="text" id="userPlace" placeholder="Enter a place">
+            <button id="clearText">⌫</button>
+            <p class="result_text"  id="location" >N/a</p>
+            <button class="result_text" id="locationLabel" >➠ Go to your current location</button>
+        </div>
+
+        <div id="navigationContainer">
+            <button class="label notSelected" id="searchBtn">
+                Search results
+            </button>
+            <button class="label notSelected" id="destBtn">
+                Destinations (0)
+            </button>
+            <button class="label notSelected" id="dirBtn">
+                Directions
+            </button>
+        </div>
+
+        <div id="mapContainer" >
+            <div id="map" ></div>
+        </div>
+
+        <div id="result" class="result_container">
             <div id="resultList" ></div>
-            <button id="expandSearch" class="expandSearch">→</button> 
         </div>
-        <!-- 2nd Columb for places added by user -->
+
         <div id="places" class="places_container">
-            <div id="placesHeader">
-                <p class="destinations"  id="destLabel">My Destinations</p>
-                <button class="placesAction" id="clearList">Clear list</button>
-                <button class="placesAction" id="calc">Calculate trip</button>
+            <div class="destinations" id="destText" >
+                
             </div>
-            <div class="destinations" id="destText" ></div>
-            <button id="expand" class="expandPlaces">→</button> 
+            <button class='placesAction' id='clearList'>Clear All</button>
+            <button class='placesAction' id='calc'>Directions</button>
         </div>
-        <div id="tripInfo" class="tripInfo_container">
-                <div id="weather">
+
+        <div id="result" class="result_container">
+            <div id="resultList" ></div>
+        </div>
+
+        <div id="directions" class="directions_container">
+                <!-- <div id="weather">
                 </div>
                 <div id="routes">
                     <div class="routesInfo" id="distance">
@@ -41,12 +60,8 @@
                         <p id="timeNumber"></p>
                         <p class="routesLabel">Arrival Time</p>
                     </div>
-                </div>
-        </div>
-        <!-- Map container -->
-        <div id="mapContainer" >
-            <div id="map" ></div>
-        </div>
+                </div> -->
+            </div>
     </div>
     <script src="findLocation.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVmJ3EWDCAA1Go7BMxBUjcAPH3-9H1Uno&libraries=places&callback=initMap"
